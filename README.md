@@ -1,0 +1,4 @@
+NFCReaderModeSample
+===================
+
+NdefAdapter.ReaderCallbackのサンプル
