@@ -13,16 +13,20 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.os.Build;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private NfcAdapter mNfcAdapter;
+    private TextView mTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mTextView = (TextView) findViewById(R.id.text);
     }
 
     @Override
@@ -47,7 +51,25 @@ public class MainActivity extends Activity {
     private class CustomReaderCallback implements NfcAdapter.ReaderCallback {
         @Override
         public void onTagDiscovered(Tag tag) {
-            Log.d(TAG, "Tag ID: " + tag.getId());
+            byte[] rawid = tag.getId();
+            final String idm = bytesToString(rawid);
+            Log.d(TAG, "Tag ID: " + idm);
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    mTextView.setText(idm);
+                }
+            });
         }
+    }
+
+    private String bytesToString(byte[] bytes) {
+        StringBuffer sb = new StringBuffer();
+        for (byte bt : bytes) {
+            int i = 0xFF & (int)bt;
+            String str = Integer.toHexString(i);
+            sb.append(str);
+        }
+        return sb.toString();
     }
 }
